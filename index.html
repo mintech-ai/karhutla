@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Monitoring Karhutla</title>
     
-    <!-- Meta Tags -->
+    <!-- Meta Tags for PWA -->
     <meta name="description" content="Aplikasi monitoring kebakaran hutan dan lahan (Karhutla) PT AI">
     <meta name="theme-color" content="#b91c1c"> <!-- Tailwind red-700 -->
     <link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;Monitoring Karhutla&quot;,&quot;short_name&quot;:&quot;Karhutla&quot;,&quot;description&quot;:&quot;Sistem Monitoring Kebakaran Hutan dan Lahan&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#ffffff&quot;,&quot;theme_color&quot;:&quot;#b91c1c&quot;,&quot;icons&quot;:[{&quot;src&quot;:&quot;https://placehold.co/192x192/b91c1c/ffffff?text=Fire&quot;,&quot;sizes&quot;:&quot;192x192&quot;,&quot;type&quot;:&quot;image/png&quot;},{&quot;src&quot;:&quot;https://placehold.co/512x512/b91c1c/ffffff?text=Fire&quot;,&quot;sizes&quot;:&quot;512x512&quot;,&quot;type&quot;:&quot;image/png&quot;}]}">
@@ -93,7 +93,7 @@
                 </div>
                 <div>
                     <h1 class="font-bold text-gray-800 text-lg leading-tight">Karhutla Tracker</h1>
-                    <p class="text-xs text-gray-500">Monitoring Hot Spot</p>
+                    <p class="text-xs text-gray-500">Monitoring Hot Spot Aktif</p>
                 </div>
             </div>
 
@@ -133,32 +133,67 @@
                     <i class="fa-solid fa-fire"></i>
                 </div>
             </div>
-            <h2 class="mt-4 text-xl font-bold text-gray-800">Memuat Data Hotspot.</h2>
-            <p class="text-sm text-gray-500">Menghubungkan ke data Sipongi</p>
-            <p class="text-sm text-gray-500">Sumber data satelit NASA : TERRA/AQUA, SNPP, NOAA20</p>
+            <h2 class="mt-4 text-xl font-bold text-gray-800">Memuat Data Karhutla...</h2>
+            <p class="text-sm text-gray-500">Menghubungkan ke data Sipongi...</p>
+            <p class="text-sm text-gray-500">NASA Satellite : AQUA/TERRA, SNPP, NOAA20</p>
         </div>
 
         <!-- The Map Container -->
         <div id="map" class="absolute inset-0 z-10 w-full h-full"></div>
 
-        <!-- Floating Stats Card (Bottom Left) -->
-        <div class="absolute bottom-6 left-4 z-20 pointer-events-none">
-            <div class="glass rounded-2xl p-5 shadow-xl pointer-events-auto border-t-4 border-t-red-500 min-w-[200px]">
+        <!-- Floating Stats Card (Top Left) -->
+        <div class="absolute top-4 left-4 z-20 pointer-events-none">
+            <div class="glass rounded-2xl p-4 shadow-xl pointer-events-auto border-t-4 border-t-red-500 min-w-[210px]">
                 <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Total Hot Spot</h3>
-                <div class="flex items-baseline gap-2">
-                    <span id="hotspotCount" class="text-4xl font-extrabold text-gray-800">0</span>
-                    <span class="text-sm text-gray-500 font-medium">titik</span>
+                <div class="flex items-baseline gap-2 mb-2">
+                    <span id="hotspotCount" class="text-3xl font-extrabold text-gray-800">0</span>
+                    <span class="text-xs text-gray-500 font-medium">spot</span>
                 </div>
                 
-                <div class="mt-4 pt-3 border-t border-gray-200">
+                <div class="pt-2.5 border-t border-gray-200 space-y-1.5">
                     <div class="flex items-center justify-between text-xs mb-1">
                         <span class="text-gray-500">Filter Aktif:</span>
                         <span id="activeFilterLabel" class="font-semibold text-gray-700">24 Jam</span>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
-                        <div class="bg-red-500 h-1.5 rounded-full" style="width: 100%"></div>
+
+                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider pt-1 border-t border-gray-100">Statistik Recency</div>
+                    
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block"></span>
+                            <span class="text-gray-600">&le; 24 Jam</span>
+                        </div>
+                        <span id="count24h" class="font-bold text-gray-800">0</span>
+                    </div>
+
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 inline-block"></span>
+                            <span class="text-gray-600">24-48 Jam</span>
+                        </div>
+                        <span id="count48h" class="font-bold text-gray-800">0</span>
+                    </div>
+
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-gray-400 inline-block"></span>
+                            <span class="text-gray-600">&gt; 2 Hari</span>
+                        </div>
+                        <span id="countOld" class="font-bold text-gray-800">0</span>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Floating Basemap Layer Control (Top Right) -->
+        <div class="absolute top-4 right-4 z-20">
+            <div class="glass rounded-xl p-1 shadow-lg flex flex-col gap-1 border border-white/40">
+                <button id="btnSat" onclick="switchBasemap('satellite')" class="w-full px-3 py-1.5 text-xs font-semibold rounded-lg bg-red-600 text-white shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-globe"></i> Satellite
+                </button>
+                <button id="btnOrtho" onclick="switchBasemap('ortho')" class="w-full px-3 py-1.5 text-xs font-semibold rounded-lg text-gray-700 hover:bg-white/60 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-layer-group"></i> Orthophoto
+                </button>
             </div>
         </div>
     </main>
@@ -179,11 +214,13 @@
         const timeFilterEl = document.getElementById('timeFilter');
         const activeFilterLabelEl = document.getElementById('activeFilterLabel');
         const lastUpdatedEl = document.getElementById('lastUpdated');
+        const count24hEl = document.getElementById('count24h');
+        const count48hEl = document.getElementById('count48h');
+        const countOldEl = document.getElementById('countOld');
 
         // --- PWA Service Worker Registration ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // Inline a minimal service worker just to satisfy PWA installability requirements
                 const swCode = `
                     const CACHE_NAME = 'karhutla-v1';
                     self.addEventListener('install', (e) => {
@@ -202,12 +239,8 @@
             });
         }
 
-        // --- STREAMING_CHUNK:Map Initialization Setup ---
-        // Initialize MapLibre
+        // Initialize MapLibre with Basemap Sources
         function initMap() {
-            // We use Google Satellite tiles as requested
-            // Note: Direct access to Google tile URLs in production might violate TOS, 
-            // but for this specific constraint and demonstration, this is the standard way to do it in GL JS.
             const googleSatelliteSource = {
                 type: 'raster',
                 tiles: [
@@ -219,27 +252,44 @@
                 tileSize: 256
             };
 
+            const orthophotoSource = {
+                type: 'raster',
+                tiles: [
+                    'http://10.165.1.14:9090/service?layer=basemap-image&style=&tilematrixset=grid_merc&Service=WMTS&Request=GetTile&Version=1.3.0&Format=png&TileMatrix={z}&TileCol={x}&TileRow={y}'
+                ],
+                tileSize: 256
+            };
+
             map = new maplibregl.Map({
-                container: 'map', // container id
+                container: 'map',
                 style: {
                     version: 8,
                     sources: {
-                        'google-satellite': googleSatelliteSource
+                        'google-satellite': googleSatelliteSource,
+                        'orthophoto': orthophotoSource
                     },
                     layers: [
                         {
                             id: 'satellite-layer',
                             type: 'raster',
                             source: 'google-satellite',
-                            paint: {}
+                            paint: {},
+                            layout: { visibility: 'visible' }
+                        },
+                        {
+                            id: 'orthophoto-layer',
+                            type: 'raster',
+                            source: 'orthophoto',
+                            paint: {},
+                            layout: { visibility: 'none' }
                         }
                     ]
                 },
-                center: [115.5, -2.2], // Center around Kalimantan Selatan based on sample data
-                zoom: 11, // Initial zoom level
+                center: [115.515, -2.2], // Center diperbarui ke [115.515, -2.2]
+                zoom: 11, // Zoom level diperbarui ke 11
                 pitch: 0,
                 maxZoom: 18
-            });4
+            });
 
             // Add Map Controls
             map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
@@ -250,10 +300,29 @@
 
             // Map on load event
             map.on('load', () => {
-                // Fetch data only after map is ready
                 fetchData();
                 loadBoundary();
             });
+        }
+
+        // Switch Basemap Layer
+        function switchBasemap(type) {
+            const btnSat = document.getElementById('btnSat');
+            const btnOrtho = document.getElementById('btnOrtho');
+
+            if (type === 'satellite') {
+                map.setLayoutProperty('satellite-layer', 'visibility', 'visible');
+                map.setLayoutProperty('orthophoto-layer', 'visibility', 'none');
+                
+                btnSat.className = "w-full px-3 py-1.5 text-xs font-semibold rounded-lg bg-red-600 text-white shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer";
+                btnOrtho.className = "w-full px-3 py-1.5 text-xs font-semibold rounded-lg text-gray-700 hover:bg-white/60 transition-all flex items-center justify-center gap-1.5 cursor-pointer";
+            } else if (type === 'ortho') {
+                map.setLayoutProperty('satellite-layer', 'visibility', 'none');
+                map.setLayoutProperty('orthophoto-layer', 'visibility', 'visible');
+
+                btnOrtho.className = "w-full px-3 py-1.5 text-xs font-semibold rounded-lg bg-red-600 text-white shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer";
+                btnSat.className = "w-full px-3 py-1.5 text-xs font-semibold rounded-lg text-gray-700 hover:bg-white/60 transition-all flex items-center justify-center gap-1.5 cursor-pointer";
+            }
         }
 
         // --- STREAMING_CHUNK:Fetching and processing API data ---
@@ -297,8 +366,6 @@
         }
 
         // Optional: Load GeoJSON boundary (e.g., Kalsel province boundary)
-        // Since no specific URL was provided for the boundary, I will create a placeholder implementation
-        // that draws a polygon around the sample points if a real URL isn't available.
         async function loadBoundary() {
             // URL file geojson. Ganti dengan nama/URL file GeoJSON Anda
             const geojsonUrl = 'aoi_monitoring.geojson'; 
@@ -315,7 +382,7 @@
                     'data': geojsonData
                 });
             } catch (e) {
-                console.warn('File boundary.geojson tidak ditemukan, menggunakan data batas area sample default.');
+                console.warn('File aoi_monitoring.geojson tidak ditemukan, menggunakan data batas area sample default.');
                 // Fallback default polygon batas (hanya untuk simulasi jika file lokal tidak ada)
                 map.addSource('boundary', {
                     'type': 'geojson',
@@ -362,6 +429,10 @@
             const hours = parseInt(timeFilterEl.value);
             const now = new Date(); // Menggunakan jam aktual sistem saat ini
             
+            let c24 = 0;
+            let c48 = 0;
+            let cOld = 0;
+
             const filteredData = allHotspots.filter(spot => {
                 if (!spot.date_ori) return false;
                 const spotTime = new Date(spot.date_ori);
@@ -370,9 +441,13 @@
                 const diffTime = now.getTime() - spotTime.getTime();
                 const diffHours = diffTime / (1000 * 60 * 60); 
                 
-                // Menampilkan data yang kurang dari nilai filter jam
-                // Dan memperbolehkan diff negatif kecil jaga-jaga ada perbedaan zona waktu/server
-                return diffHours <= hours && diffHours >= -24; 
+                const isValid = diffHours <= hours && diffHours >= -24;
+                if (isValid) {
+                    if (diffHours <= 24) c24++;
+                    else if (diffHours <= 48) c48++;
+                    else cOld++;
+                }
+                return isValid; 
             });
 
             // Update UI Labels
@@ -385,8 +460,11 @@
 
             renderMarkers(filteredData);
             
-            // Animate count update
+            // Animate count updates
             animateValue(hotspotCountEl, parseInt(hotspotCountEl.innerText || 0), filteredData.length, 500);
+            if (count24hEl) animateValue(count24hEl, parseInt(count24hEl.innerText || 0), c24, 500);
+            if (count48hEl) animateValue(count48hEl, parseInt(count48hEl.innerText || 0), c48, 500);
+            if (countOldEl) animateValue(countOldEl, parseInt(countOldEl.innerText || 0), cOld, 500);
         }
 
         // --- STREAMING_CHUNK:Rendering Markers on Map ---
@@ -396,21 +474,28 @@
             currentMarkers.forEach(marker => marker.remove());
             currentMarkers = [];
 
-            // Fit bounds variables
-            const bounds = new maplibregl.LngLatBounds();
-            let hasValidPoints = false;
+            const now = new Date();
 
             data.forEach(spot => {
                 if (!spot.lat || !spot.lng) return;
 
-                // Menentukan warna marker point berdasarkan tingkat confidence
-                const conf = spot.confidence ? spot.confidence.toLowerCase() : 'low';
-                let markerColor = '#facc15'; // Default Low (Kuning / Yellow-400)
-                
-                if (conf === 'high') {
-                    markerColor = '#ef4444'; // High (Merah / Red-500)
-                } else if (conf === 'medium') {
-                    markerColor = '#f97316'; // Medium (Oranye / Orange-500)
+                // Hitung selisih waktu (dalam jam) dari date_ori hingga saat ini
+                let diffHours = 0;
+                if (spot.date_ori) {
+                    const spotTime = new Date(spot.date_ori);
+                    diffHours = (now.getTime() - spotTime.getTime()) / (1000 * 60 * 60);
+                }
+
+                // Klasifikasi warna marker berdasarkan WAKTU (Recency)
+                let markerColor = '#9ca3af'; // Grey / Abu-abu (> 48 jam / 2 hari s/d 7 hari)
+                let timeCategoryLabel = '> 2 Hari (s/d 7 Hari)';
+
+                if (diffHours <= 24) {
+                    markerColor = '#f97316'; // Orange (0 - 24 Jam)
+                    timeCategoryLabel = '< 24 Jam';
+                } else if (diffHours <= 48) {
+                    markerColor = '#facc15'; // Yellow / Kuning (24 - 48 Jam / 2 Hari)
+                    timeCategoryLabel = '24 - 48 Jam';
                 }
 
                 // Membuat elemen HTML kustom untuk Marker Lingkaran (Circle)
@@ -427,8 +512,13 @@
                         </div>
                         <div class="space-y-1.5 text-xs text-gray-600">
                             <div class="flex justify-between"><span class="font-medium">Tanggal:</span> <span>${spot.date || '-'}</span></div>
+                            <div class="flex justify-between"><span class="font-medium">Rentang Waktu:</span> 
+                                <span class="font-bold" style="color: ${markerColor}">
+                                    ${timeCategoryLabel}
+                                </span>
+                            </div>
                             <div class="flex justify-between"><span class="font-medium">Confidence:</span> 
-                                <span class="capitalize font-bold ${conf === 'high' ? 'text-red-600' : (conf === 'medium' ? 'text-orange-500' : 'text-yellow-500')}">
+                                <span class="capitalize font-semibold text-gray-700">
                                     ${spot.confidence || '-'}
                                 </span>
                             </div>
@@ -440,8 +530,8 @@
                                     <span class="text-gray-500">${spot.kabkota || ''}, ${spot.provinsi || ''}</span>
                                 </div>
                             </div>
-                            <div class="mt-2 pt-2 border-t border-gray-100 text-[10px] text-gray-400">
-                                Lat: ${spot.lat.toFixed(5)}, Lng: ${spot.lng.toFixed(5)}
+                            <div class="mt-2 pt-2 border-t border-gray-100 text-xs text-gray-500">
+                                Coordinate: <a href="https://www.google.com/maps?q=${spot.lat},${spot.lng}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium inline-flex items-center gap-1">${spot.lat}, ${spot.lng} <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>
                             </div>
                         </div>
                     </div>
@@ -455,20 +545,7 @@
                     .addTo(map);
 
                 currentMarkers.push(marker);
-                
-                // Extend bounds
-                bounds.extend([spot.lng, spot.lat]);
-                hasValidPoints = true;
             });
-
-            // Adjust map view to fit new markers if they exist
-            if (hasValidPoints && data.length > 0) {
-                map.fitBounds(bounds, {
-                    padding: {top: 100, bottom: 100, left: 50, right: 50},
-                    maxZoom: 12,
-                    duration: 1000
-                });
-            }
         }
 
         // --- STREAMING_CHUNK:Helper Functions & Event Listeners ---
